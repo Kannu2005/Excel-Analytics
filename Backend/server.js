@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Set default port if not provided
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+
 
 // Routes
 const authRoutes = require('./routes/auth');
@@ -57,19 +57,18 @@ const createAdminUser = async () => {
 };
 
 // MongoDB Connection
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(async () => {
-  console.log("MongoDB connected");
+mongoose.connect(process.env.MONGO_URI)
+  .then(async () => {
+    console.log("MongoDB connected");
 
-  // Create admin user
-  await createAdminUser();
+    // Create admin user
+    await createAdminUser();
 
-  // Start Server
-  app.listen(PORT, () =>
-    console.log(`Server running on port ${PORT}`)
-  );
-}).catch((err) => {
-  console.error("MongoDB connection failed:", err.message);
-});
+    // Start Server
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error("MongoDB connection failed:", err.message);
+  });
