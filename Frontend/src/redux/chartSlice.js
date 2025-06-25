@@ -1,4 +1,3 @@
-// redux/chartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Helper to get token and create headers with Authorization
@@ -15,24 +14,27 @@ export const createChart = createAsyncThunk(
   "charts/create",
   async (chartData, { rejectWithValue }) => {
     try {
-      // console.log("Creating chart with data:", chartData);
-
       const response = await fetch("https://excel-analytics-1-sjro.onrender.com/charts", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(chartData),
       });
 
+      const contentType = response.headers.get("content-type");
+
       if (!response.ok) {
+        if (!contentType || !contentType.includes("application/json")) {
+          const errorText = await response.text();
+          return rejectWithValue(`Unexpected error: ${errorText}`);
+        }
+
         const errorData = await response.json();
         return rejectWithValue(errorData.message || "Chart creation failed");
       }
 
       const data = await response.json();
-      // console.log("Chart created successfully:", data);
       return data;
     } catch (error) {
-      console.error("Chart creation error:", error);
       return rejectWithValue(error.message || "Chart creation failed");
     }
   }
@@ -43,18 +45,23 @@ export const getUserCharts = createAsyncThunk(
   "charts/getUserCharts",
   async (_, { rejectWithValue }) => {
     try {
-      // console.log("Z test",_)
-      const response = await fetch("http://localhost:5000/api/charts", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/charts", {
         headers: getAuthHeaders(),
       });
-// console.log("Fetch response:", response);
+
+      const contentType = response.headers.get("content-type");
+
       if (!response.ok) {
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          return rejectWithValue(`Unexpected error: ${text}`);
+        }
+
         const errorData = await response.json();
         return rejectWithValue(errorData.message || "Failed to fetch charts");
       }
 
       const data = await response.json();
-      // console.log("Fetched chart data:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to fetch charts");
@@ -67,22 +74,26 @@ export const getChart = createAsyncThunk(
   "charts/getChart",
   async (chartId, { rejectWithValue }) => {
     try {
-      console.log("Fetching chart with ID:", chartId);
       const response = await fetch(
-        `http://localhost:5000/api/charts/${chartId}`,
+        `https://excel-analytics-1-sjro.onrender.com/${chartId}`,
         {
           headers: getAuthHeaders(),
         }
       );
-  // console.log("Fetch response:", response);
+
+      const contentType = response.headers.get("content-type");
+
       if (!response.ok) {
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          return rejectWithValue(`Unexpected error: ${text}`);
+        }
+
         const errorData = await response.json();
         return rejectWithValue(errorData.message || "Failed to fetch chart");
       }
 
       const data = await response.json();
-    
-      console.log("Fetched chart data:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to fetch chart");
@@ -124,7 +135,6 @@ const chartSlice = createSlice({
       .addCase(createChart.fulfilled, (state, action) => {
         state.loading = false;
         state.createSuccess = true;
-        // The response structure from your backend: { message, chart }
         state.currentChart = action.payload.chart;
         state.charts.unshift(action.payload.chart);
       })
@@ -141,7 +151,7 @@ const chartSlice = createSlice({
       })
       .addCase(getUserCharts.fulfilled, (state, action) => {
         state.loading = false;
-        state.charts = action.payload; // Assuming the response is an array of charts
+        state.charts = action.payload;
       })
       .addCase(getUserCharts.rejected, (state, action) => {
         state.loading = false;

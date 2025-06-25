@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Helper to get token and create headers with Authorization
 const getAuthHeaders = (isFormData = false) => {
-  const token = localStorage.getItem("token"); // adjust if you store token elsewhere
+  const token = localStorage.getItem("token");
   return {
     Authorization: token ? `Bearer ${token}` : "",
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
@@ -15,7 +15,6 @@ export const uploadFile = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      // console.log("Sending token:", token); // ✅ Debug log
 
       const response = await fetch("https://excel-analytics-1-sjro.onrender.com/upload", {
         method: "POST",
@@ -25,7 +24,14 @@ export const uploadFile = createAsyncThunk(
         body: formData,
       });
 
+      const contentType = response.headers.get("content-type");
+
       if (!response.ok) {
+        if (!contentType || !contentType.includes("application/json")) {
+          const errorText = await response.text();
+          return rejectWithValue(`Unexpected error: ${errorText}`);
+        }
+
         const errorData = await response.json();
         return rejectWithValue(errorData.message || "Upload failed");
       }
@@ -48,9 +54,16 @@ export const getUserFiles = createAsyncThunk(
       });
 
       if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          return rejectWithValue(`Unexpected error: ${text}`);
+        }
+
         const errorData = await response.json();
         return rejectWithValue(errorData.message || "Failed to fetch files");
       }
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -72,11 +85,16 @@ export const getFileData = createAsyncThunk(
       );
 
       if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          return rejectWithValue(`Unexpected error: ${text}`);
+        }
+
         const errorData = await response.json();
-        return rejectWithValue(
-          errorData.message || "Failed to fetch file data"
-        );
+        return rejectWithValue(errorData.message || "Failed to fetch file data");
       }
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -118,13 +136,33 @@ const fileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
       // Get user files
+      .addCase(getUserFiles.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(getUserFiles.fulfilled, (state, action) => {
+        state.loading = false;
         state.files = action.payload;
       })
+      .addCase(getUserFiles.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Get file data
+      .addCase(getFileData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(getFileData.fulfilled, (state, action) => {
+        state.loading = false;
         state.currentFile = action.payload;
+      })
+      .addCase(getFileData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
