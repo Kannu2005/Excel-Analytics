@@ -49,7 +49,7 @@ export const getUserFiles = createAsyncThunk(
   "files/getUserFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/files", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/api/files", {
         headers: getAuthHeaders(),
       });
 
@@ -78,7 +78,7 @@ export const getFileData = createAsyncThunk(
   async (fileId, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `https://excel-analytics-1-sjro.onrender.com/${fileId}`,
+        `https://excel-analytics-1-sjro.onrender.com/api/files/${fileId}`,
         {
           headers: getAuthHeaders(),
         }

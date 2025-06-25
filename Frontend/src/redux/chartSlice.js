@@ -14,7 +14,7 @@ export const createChart = createAsyncThunk(
   "charts/create",
   async (chartData, { rejectWithValue }) => {
     try {
-      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/charts", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/api/charts", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(chartData),
@@ -45,7 +45,7 @@ export const getUserCharts = createAsyncThunk(
   "charts/getUserCharts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/charts", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/api/charts", {
         headers: getAuthHeaders(),
       });
 
@@ -75,7 +75,7 @@ export const getChart = createAsyncThunk(
   async (chartId, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `https://excel-analytics-1-sjro.onrender.com/${chartId}`,
+        `https://excel-analytics-1-sjro.onrender.com/api/charts/${chartId}`,
         {
           headers: getAuthHeaders(),
         }
