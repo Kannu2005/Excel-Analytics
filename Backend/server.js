@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Set default port if not provided
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/excel-analytics';
+const MONGO_URI = process.env.MONGO_URI;
 
 // Routes
 const authRoutes = require('./routes/auth');
