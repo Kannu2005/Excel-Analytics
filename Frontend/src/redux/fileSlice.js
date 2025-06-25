@@ -16,7 +16,7 @@ export const uploadFile = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/upload", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/api/files/upload", {
         method: "POST",
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
