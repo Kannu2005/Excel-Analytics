@@ -34,7 +34,9 @@ exports.register = async (req, res) => {
       role: role || 'user'
     });
 
+    console.log('Attempting to save user:', user);
     await user.save();
+    console.log('User saved successfully:', user);
     res.status(201).json({ msg: 'User registered successfully' });
 
   } catch (error) {
@@ -45,21 +47,30 @@ exports.register = async (req, res) => {
 
 // Login a user
 exports.login = async (req, res) => {
+  console.log('Login request body:', req.body); // Debug log
   const { email, password } = req.body;
 
+  if (!email) {
+    console.log('Login error: Missing email');
+    return res.status(400).json({ msg: 'Email is required' });
+  }
+  if (!password) {
+    console.log('Login error: Missing password');
+    return res.status(400).json({ msg: 'Password is required' });
+  }
+
   try {
-    // Validate required fields
-    if (!email || !password) {
-      return res.status(400).json({ msg: 'Email and password are required' });
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log('Login error: User not found for email', email);
+      return res.status(400).json({ msg: 'Invalid email or password' });
     }
 
-    const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).json({ msg: 'Invalid email or password' });
-
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
+      console.log('Login error: Incorrect password for email', email);
       return res.status(400).json({ msg: 'Invalid email or password' });
+    }
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -67,6 +78,7 @@ exports.login = async (req, res) => {
       { expiresIn: '1d' }
     );
 
+    console.log('Login success for email', email);
     res.json({
       token,
       user: {
@@ -76,7 +88,6 @@ exports.login = async (req, res) => {
         role: user.role
       }
     });
-
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ msg: 'Server error', error: error.message });
