@@ -1,5 +1,5 @@
 // src/services/api.js
-const API_BASE_URL = 'https://excel-analytics-1-sjro.onrender.com/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 class ApiService {
     constructor() {

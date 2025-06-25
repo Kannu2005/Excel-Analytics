@@ -16,9 +16,7 @@ app.use(express.json());
 
 // Set default port if not provided
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = "mongodb+srv://22dit024:7WA3yS1be0s212ud@cluster0.fiat9g1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-
+const MONGO_URI = process.env.MONGO_URI;
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/api', authRoutes);
