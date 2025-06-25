@@ -1,6 +1,6 @@
 // utils/api.js
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL || "https://excel-analytics-1-sjro.onrender.com/api";
 
 const api = {
   // Generic fetch wrapper
