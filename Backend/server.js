@@ -46,8 +46,8 @@ const createAdminUser = async () => {
       });
       await adminUser.save();
       console.log('✅ Admin user created successfully');
-      console.log('📧 Email: admin@example.com');
-      console.log('🔑 Password: admin123');
+      console.log('📧 Email: keshavkhandelwal876@gmail.com');
+      console.log('🔑 Password: keshav@123');
     } else {
       console.log('✅ Admin user already exists');
     }
