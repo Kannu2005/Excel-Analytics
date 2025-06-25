@@ -17,7 +17,7 @@ export const createChart = createAsyncThunk(
     try {
       // console.log("Creating chart with data:", chartData);
 
-      const response = await fetch("http://localhost:5000/api/charts", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/charts", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(chartData),

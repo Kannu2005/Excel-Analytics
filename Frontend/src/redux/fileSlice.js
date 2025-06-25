@@ -17,7 +17,7 @@ export const uploadFile = createAsyncThunk(
       const token = localStorage.getItem("token");
       // console.log("Sending token:", token); // ✅ Debug log
 
-      const response = await fetch("http://localhost:5000/api/files/upload", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/upload", {
         method: "POST",
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
@@ -43,7 +43,7 @@ export const getUserFiles = createAsyncThunk(
   "files/getUserFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:5000/api/files", {
+      const response = await fetch("https://excel-analytics-1-sjro.onrender.com/files", {
         headers: getAuthHeaders(),
       });
 
@@ -65,7 +65,7 @@ export const getFileData = createAsyncThunk(
   async (fileId, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/files/${fileId}`,
+        `https://excel-analytics-1-sjro.onrender.com/${fileId}`,
         {
           headers: getAuthHeaders(),
         }
